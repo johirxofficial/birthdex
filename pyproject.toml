@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "birthdex"
+version = "1.0.0"
+description = "Self-hosted birth and death registration verification for Bangladesh (BDRIS) with a human captcha step."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "BirthDex contributors" }]
+keywords = [
+    "bangladesh",
+    "bdris",
+    "birth-certificate",
+    "death-certificate",
+    "verification",
+    "flask",
+    "self-hosted",
+    "captcha",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+]
+dependencies = [
+    "Flask>=3.0,<4",
+    "requests>=2.31,<3",
+    "beautifulsoup4>=4.12,<5",
+    "waitress>=3.0,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+    "build>=1.2",
+]
+prod = [
+    "gunicorn>=22,<24; sys_platform != 'win32'",
+]
+
+[project.scripts]
+birthdex = "birthdex.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/johirxofficial/birthdex"
+Repository = "https://github.com/johirxofficial/birthdex"
+Issues = "https://github.com/johirxofficial/birthdex/issues"
+Changelog = "https://github.com/johirxofficial/birthdex/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ["birthdex*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+birthdex = ["templates/*.html", "static/*.css", "static/*.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

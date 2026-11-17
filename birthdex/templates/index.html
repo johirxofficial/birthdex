@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BirthDex — Birth &amp; death registration verification</title>
+  <meta name="description" content="Verify Bangladesh birth (UBRN) and death (UDRN) registrations with a human captcha step. Open source, self-hosted, no OCR.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231d4ed8'/%3E%3Ctext x='16' y='22' font-family='Arial,sans-serif' font-size='15' font-weight='700' fill='white' text-anchor='middle'%3EBD%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">BD</span>
+        <span>BirthDex</span>
+      </a>
+      <nav class="topnav" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#api">API</a>
+        <a href="/health">Health</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <h1>Verify a birth or death registration.</h1>
+      <p>
+        Enter the 17-digit registration number and the date. BirthDex shows the
+        BDRIS portal captcha — type what you see and the record comes back.
+        No OCR, no automation of the captcha.
+      </p>
+      <div class="hero-tags">
+        <span class="pill">Manual captcha</span>
+        <span class="pill">Open source</span>
+        <span class="pill">Self-hosted</span>
+        <span class="pill">No data stored</span>
+      </div>
+    </section>
+
+    <p class="alert" id="alert" role="alert" hidden></p>
+
+    <section class="panel" id="search-panel" aria-labelledby="search-title">
+      <div class="panel-head">
+        <h2 id="search-title">Step 1 · Registration details</h2>
+      </div>
+
+      <form id="search-form" class="form" novalidate>
+        <fieldset class="field">
+          <legend>Record type</legend>
+          <div class="switch" role="radiogroup" aria-label="Record type">
+            <label class="switch-option">
+              <input type="radio" name="type" value="birth" checked>
+              <span>Birth</span>
+            </label>
+            <label class="switch-option">
+              <input type="radio" name="type" value="death">
+              <span>Death</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label for="number">Registration number</label>
+          <input id="number" name="number" type="text" inputmode="numeric"
+                 autocomplete="off" spellcheck="false" maxlength="32"
+                 placeholder="19901234567890123" required>
+          <p class="hint">17 digits, as printed on the certificate (UBRN or UDRN).</p>
+        </div>
+
+        <div class="field">
+          <label for="dob" id="dob-label">Date of birth</label>
+          <input id="dob" name="dob" type="date" required>
+          <p class="hint">The date shown on the certificate.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="search-btn" type="submit">Continue</button>
+          <button class="btn btn-ghost" id="reset-btn" type="reset">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" id="captcha-panel" aria-labelledby="captcha-title" hidden>
+      <div class="panel-head">
+        <h2 id="captcha-title">Step 2 · Type the captcha</h2>
+        <button class="link" id="refresh-captcha" type="button">New image</button>
+      </div>
+
+      <div class="captcha-wrap">
+        <img id="captcha-image" class="captcha" alt="Captcha image from the BDRIS portal" width="200" height="70">
+      </div>
+
+      <form id="captcha-form" class="captcha-form" novalidate>
+        <label class="sr-only" for="captcha">Captcha answer</label>
+        <input id="captcha" name="captcha" type="text" inputmode="numeric"
+               autocomplete="off" spellcheck="false" placeholder="What you see"
+               aria-describedby="captcha-hint" required>
+        <button class="btn" id="captcha-btn" type="submit">Verify</button>
+      </form>
+      <p class="hint" id="captcha-hint">
+        Usually a short sum such as <code>45+12=?</code> — type the result.
+        Case does not matter.
+      </p>
+    </section>
+
+    <section class="panel" id="result-panel" aria-labelledby="result-title" hidden>
+      <div class="panel-head">
+        <h2 id="result-title">Record</h2>
+        <span class="tag" id="result-tag">Verified</span>
+      </div>
+      <dl class="record" id="record"></dl>
+      <div class="actions">
+        <button class="btn btn-ghost" id="copy-json" type="button">Copy JSON</button>
+        <button class="btn btn-ghost" id="new-search" type="button">New search</button>
+      </div>
+    </section>
+
+    <section class="steps" id="how" aria-labelledby="how-title">
+      <h2 id="how-title">How it works</h2>
+      <ol class="step-list">
+        <li>
+          <span class="step-number" aria-hidden="true">1</span>
+          <div>
+            <h3>Send the number and date</h3>
+            <p>BirthDex opens a session on the public BDRIS e-Verify portal.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number" aria-hidden="true">2</span>
+          <div>
+            <h3>Read the captcha</h3>
+            <p>The portal captcha is shown to you. Solving it is always manual.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number" aria-hidden="true">3</span>
+          <div>
+            <h3>Get the record</h3>
+            <p>The response is a clean JSON record — or a new captcha to retry.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="panel" id="api" aria-labelledby="api-title">
+      <div class="panel-head">
+        <h2 id="api-title">API</h2>
+        <a class="link" href="/api/verify?type=birth&amp;number=19901234567890123&amp;dob=1990-01-01" target="_blank" rel="noopener">Try it</a>
+      </div>
+      <pre class="code"><code>GET /api/verify?type=birth&amp;number=19901234567890123&amp;dob=1990-01-01
+# → 428 + captcha { id, image_url }
+
+GET /api/verify?type=birth&amp;number=19901234567890123&amp;dob=1990-01-01&amp;captcha_id=...&amp;captcha=56
+# → 200 + data { ... }</code></pre>
+      <p class="hint">Full reference: <code>docs/API.md</code> in the repository.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <p>
+        <strong>BirthDex</strong> v{{ version }} · MIT licensed · Independent open-source
+        project, not affiliated with BDRIS.
+      </p>
+      <p class="muted">
+        Personal data is passed through and never written to disk. Use it only with
+        a lawful reason.
+      </p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

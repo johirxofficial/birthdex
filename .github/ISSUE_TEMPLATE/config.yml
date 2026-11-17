@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: API reference
+    url: https://github.com/johirxofficial/birthdex/blob/main/docs/API.md
+    about: Endpoints, status codes and client examples.
+  - name: Deployment guide
+    url: https://github.com/johirxofficial/birthdex/blob/main/docs/DEPLOY.md
+    about: Running BirthDex on Windows, Linux, Docker or behind a proxy.
+  - name: Security policy
+    url: https://github.com/johirxofficial/birthdex/blob/main/SECURITY.md
+    about: Report vulnerabilities privately, never in a public issue.
