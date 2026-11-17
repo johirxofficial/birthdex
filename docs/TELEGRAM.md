@@ -50,7 +50,7 @@ flask  python  self-hosted  open-source  captcha  manual-captcha  api
 > • 43 tests, entirely offline
 >
 > **Quick start**
-> `pipx install birthdex` then `birthdex` → http://localhost:5002
+> `pipx install git+https://github.com/johirxofficial/birthdex` then `birthdex` → http://localhost:5002
 > From source: `git clone https://github.com/johirxofficial/birthdex`
 > `cd birthdex && ./run.sh` (Windows: `run.bat`)
 >

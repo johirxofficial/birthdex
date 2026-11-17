@@ -9,11 +9,11 @@ jobs.
 ## 0. Install as a package (any OS)
 
 ```bash
-pipx install birthdex        # isolated CLI install
+pipx install git+https://github.com/johirxofficial/birthdex.git   # isolated CLI install
 # or
 python -m venv .venv
 # Windows: .venv\Scripts\activate    Linux/macOS: . .venv/bin/activate
-pip install birthdex
+pip install "git+https://github.com/johirxofficial/birthdex.git"
 ```
 
 Then start it anywhere with the built-in Waitress server:

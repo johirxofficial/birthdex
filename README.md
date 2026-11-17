@@ -66,16 +66,20 @@ No database, no API keys, no configuration required.
 ### pipx (recommended for a CLI install)
 
 ```bash
-pipx install birthdex
+pipx install git+https://github.com/johirxofficial/birthdex.git
 birthdex            # http://localhost:5002
 ```
+
+> Once the package is on PyPI (see
+> [docs/RELEASING.md](docs/RELEASING.md#3-optional-pypi-with-trusted-publishing)),
+> the same command becomes `pipx install birthdex`.
 
 ### pip (inside a virtual environment)
 
 ```bash
 python -m venv .venv
 # Windows: .venv\Scripts\activate    Linux/macOS: . .venv/bin/activate
-pip install birthdex
+pip install "git+https://github.com/johirxofficial/birthdex.git"
 birthdex
 ```
 
